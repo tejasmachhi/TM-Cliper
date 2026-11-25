@@ -66,6 +66,7 @@ class UploadClipRequest(BaseModel):
     description: Optional[str] = None
     tags: Optional[Any] = None
     privacy_status: Optional[str] = "public"
+    upload_type: Optional[str] = "shorts"
 
 # ----------------- 1. START CONNECTION -----------------
 @router.get("/connect")
@@ -329,8 +330,15 @@ def upload_clip(
     if not target_file:
         raise HTTPException(status_code=404, detail="Rendered clip video file was not found on server disk.")
 
-    title = req.title or clip.title or account.default_title or "Viral Clip #Shorts"
-    description = req.description or clip.description or account.default_description or "Generated with TM Cliper AI #Shorts"
+    upload_type = req.upload_type or "shorts"
+    title = req.title or clip.title or account.default_title or "Viral Clip"
+    if upload_type == "shorts" and "#Shorts" not in title and "#shorts" not in title:
+        title = f"{title} #Shorts"
+
+    description = req.description or clip.description or account.default_description or "Generated with TM Cliper AI"
+    if upload_type == "shorts" and "#Shorts" not in description and "#shorts" not in description:
+        description = f"{description}\n\n#Shorts #viral #trending"
+
     tags = req.tags or account.default_tags or ["shorts", "viral", "tmcliper"]
     privacy = req.privacy_status or account.default_privacy or "public"
 
@@ -344,6 +352,12 @@ def upload_clip(
             privacy_status=privacy,
             db=db
         )
+        vid = result.get("youtube_video_id")
+        result["upload_type"] = upload_type
+        if upload_type == "shorts":
+            result["youtube_url"] = f"https://www.youtube.com/shorts/{vid}"
+        else:
+            result["youtube_url"] = f"https://www.youtube.com/watch?v={vid}"
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"YouTube upload failed: {str(e)}")
@@ -410,6 +424,7 @@ def publish_integration_alias(data: dict, user: User = Depends(get_current_user)
         title=data.get("title"),
         description=data.get("description"),
         tags=data.get("tags"),
-        privacy_status=data.get("privacy_status", "public")
+        privacy_status=data.get("privacy_status", "public"),
+        upload_type=data.get("upload_type", "shorts")
     )
     return upload_clip(req=req, user=user, db=db)
