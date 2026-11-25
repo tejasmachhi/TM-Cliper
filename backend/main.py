@@ -5,6 +5,9 @@ import datetime
 import threading
 from pathlib import Path
 from typing import Optional, List
+from dotenv import load_dotenv
+
+load_dotenv()
 
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Depends, Header, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware

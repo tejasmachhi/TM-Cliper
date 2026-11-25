@@ -6,6 +6,9 @@ import datetime
 from typing import Optional, Tuple, Dict, Any
 from pathlib import Path
 import requests
+from dotenv import load_dotenv
+
+load_dotenv()
 
 from google.oauth2.credentials import Credentials
 import googleapiclient.discovery
