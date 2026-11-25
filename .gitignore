@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+dist/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+npm-debug.log*
+yarn-debug.log*
+
+# Database & Media storage
+*.db
+*.sqlite3
+storage/recordings/*
+!storage/recordings/.gitkeep
+storage/clips/*
+!storage/clips/.gitkeep
+storage/thumbnails/*
+!storage/thumbnails/.gitkeep
+storage/projects/*
+!storage/projects/.gitkeep
+storage/exports/*
+!storage/exports/.gitkeep
+storage/processing/*
+!storage/processing/.gitkeep
+
+# Local envs
+.env
+.env.local
+.env.development.local
+.env.production.local
+
+# OS
+.DS_Store
+Thumbs.db
