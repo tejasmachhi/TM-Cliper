@@ -23,10 +23,13 @@ import {
 } from 'lucide-react';
 import { api } from '@/utils/api';
 import VideoPlayerModal from '@/components/VideoPlayerModal';
+import UploadToYouTubeModal from '@/components/UploadToYouTubeModal';
 import YouTubeLogo from '@/components/YouTubeLogo';
+import { useToast } from '@/context/ToastContext';
 import Link from 'next/link';
 
 export default function CreateClipsPage() {
+  const { toast } = useToast();
   const [step, setStep] = useState(1); // 1: Input URL, 2: Preview & Confirm, 3: Processing, 4: Results
   const [youtubeUrl, setYoutubeUrl] = useState('');
   const [loadingPreview, setLoadingPreview] = useState(false);
@@ -48,15 +51,10 @@ export default function CreateClipsPage() {
   // Results
   const [generatedClips, setGeneratedClips] = useState([]);
   const [activePreviewClip, setActivePreviewClip] = useState(null);
+  const [uploadingClip, setUploadingClip] = useState(null);
 
-  const handlePublishClip = async (clip) => {
-    if (!confirm(`Confirm Publishing:\nDo you want to publish "${clip.title}" directly to your connected YouTube Shorts channel?`)) return;
-    try {
-      const res = await api.publishToYouTube({ clip_id: clip.id, title: clip.title });
-      alert(`Successfully published to YouTube Shorts!\nVideo Link: ${res.youtube_url}`);
-    } catch (err) {
-      alert('Publishing error: ' + err.message);
-    }
+  const handlePublishClip = (clip) => {
+    setUploadingClip(clip);
   };
 
   // Handle Step 1: Preview YouTube URL
@@ -82,7 +80,7 @@ export default function CreateClipsPage() {
   // Handle Step 2 -> 3: Launch AI Processing
   const handleLaunchAnalysis = async () => {
     if (!confirmedRights) {
-      alert('Please confirm that you have permission to process this video.');
+      toast.warning('Please confirm that you have permission to process this video.');
       return;
     }
 
@@ -106,7 +104,7 @@ export default function CreateClipsPage() {
         setCurrentProjectId(res.project_id);
       }
     } catch (err) {
-      alert('Error initiating project: ' + err.message);
+      toast.error(err.message || 'Error initiating project');
       setStep(2);
     }
   };
@@ -563,6 +561,17 @@ export default function CreateClipsPage() {
           clip={activePreviewClip}
           onClose={() => setActivePreviewClip(null)}
           onDelete={() => { }}
+        />
+      )}
+
+      {/* Upload to YouTube Modal Dialog */}
+      {uploadingClip && (
+        <UploadToYouTubeModal
+          clip={uploadingClip}
+          onClose={() => setUploadingClip(null)}
+          onSuccess={(res) => {
+            toast.success(`Published "${uploadingClip.title}" to YouTube Shorts!`, 'Published', res.youtube_url);
+          }}
         />
       )}
     </div>

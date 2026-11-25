@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Sidebar from '@/components/Sidebar';
 import Header from '@/components/Header';
 import { AuthProvider, useAuth } from '@/context/AuthContext';
+import { ToastProvider } from '@/context/ToastContext';
 import { Sparkles, Menu, X } from 'lucide-react';
 
 const PUBLIC_ROUTES = ['/', '/features', '/pricing', '/login', '/register', '/forgot-password'];
@@ -217,9 +218,11 @@ function AppShellInner({ children }) {
 export default function AppShell({ children }) {
   return (
     <AuthProvider>
-      <AppShellInner>
-        {children}
-      </AppShellInner>
+      <ToastProvider>
+        <AppShellInner>
+          {children}
+        </AppShellInner>
+      </ToastProvider>
     </AuthProvider>
   );
 }

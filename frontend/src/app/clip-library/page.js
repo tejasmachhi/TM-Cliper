@@ -5,11 +5,13 @@ import { Film, Play, Download, Trash2, Filter, Sparkles, CheckSquare, Square, Cl
 import VideoPlayerModal from '@/components/VideoPlayerModal';
 import UploadToYouTubeModal from '@/components/UploadToYouTubeModal';
 import YouTubeLogo from '@/components/YouTubeLogo';
+import { useToast } from '@/context/ToastContext';
 import Link from 'next/link';
 import { api } from '@/utils/api';
 import '@/styles/clips.scss';
 
 export default function ClipLibraryPage() {
+  const { toast } = useToast();
   const [clips, setClips] = useState([]);
   const [activeClip, setActiveClip] = useState(null);
   const [filterCategory, setFilterCategory] = useState('ALL');
@@ -58,10 +60,11 @@ export default function ClipLibraryPage() {
     setIsDeleting(true);
     try {
       await api.batchDeleteClips(selectedIds);
+      toast.success(`Deleted ${selectedIds.length} clip(s).`);
       setClips(prev => prev.filter(c => !selectedIds.includes(c.id)));
       setSelectedIds([]);
     } catch (err) {
-      alert('Batch delete failed: ' + err.message);
+      toast.error('Batch delete failed: ' + err.message);
     } finally {
       setIsDeleting(false);
     }
@@ -72,11 +75,11 @@ export default function ClipLibraryPage() {
     setIsDeleting(true);
     try {
       const res = await api.cleanupOldClips(3);
-      alert(`Cleaned up ${res.deleted_count || 0} clip(s) older than 3 days.`);
+      toast.success(`Cleaned up ${res.deleted_count || 0} clip(s) older than 3 days.`);
       fetchClips();
       setSelectedIds([]);
     } catch (err) {
-      alert('Auto-clean failed: ' + err.message);
+      toast.error('Auto-clean failed: ' + err.message);
     } finally {
       setIsDeleting(false);
     }
@@ -299,7 +302,7 @@ export default function ClipLibraryPage() {
               setClips(prev => prev.filter(c => c.id !== id));
               setSelectedIds(prev => prev.filter(i => i !== id));
             } catch (err) {
-              alert('Failed to delete clip: ' + err.message);
+              toast.error('Failed to delete clip: ' + err.message);
             }
           }}
         />
@@ -309,6 +312,9 @@ export default function ClipLibraryPage() {
         <UploadToYouTubeModal
           clip={uploadingClip}
           onClose={() => setUploadingClip(null)}
+          onSuccess={(res) => {
+            toast.success(`Published "${uploadingClip.title}" to YouTube Shorts!`, 'Published', res.youtube_url);
+          }}
         />
       )}
     </div>

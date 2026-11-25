@@ -19,8 +19,10 @@ import {
 } from 'lucide-react';
 import YouTubeLogo from '@/components/YouTubeLogo';
 import { api } from '@/utils/api';
+import { useToast } from '@/context/ToastContext';
 
 export default function ConnectedAccounts() {
+  const { toast } = useToast();
   const searchParams = useSearchParams();
   const [loading, setLoading] = useState(true);
   const [connecting, setConnecting] = useState(false);
@@ -100,10 +102,10 @@ export default function ConnectedAccounts() {
           text: 'Google OAuth is pending setup: Please provide GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in backend/.env'
         });
       } else {
-        alert(res.message || 'Unable to generate Google authorization link.');
+        toast.error(res.message || 'Unable to generate Google authorization link.');
       }
     } catch (err) {
-      alert('Error initiating connection: ' + err.message);
+      toast.error('Error initiating connection: ' + err.message);
     } finally {
       setConnecting(false);
     }
@@ -118,12 +120,9 @@ export default function ConnectedAccounts() {
     try {
       await api.disconnectYouTubeAccount();
       setStatusData({ connected: false, configured: statusData.configured, account: null });
-      setFeedbackMessage({
-        type: 'success',
-        text: 'YouTube account disconnected and credentials revoked.'
-      });
+      toast.success('YouTube account disconnected and credentials revoked.');
     } catch (err) {
-      alert('Disconnect failed: ' + err.message);
+      toast.error('Disconnect failed: ' + err.message);
     } finally {
       setLoading(false);
     }
@@ -135,13 +134,9 @@ export default function ConnectedAccounts() {
     setSavingPrefs(true);
     try {
       await api.updateYouTubePreferences(prefs);
-      setFeedbackMessage({
-        type: 'success',
-        text: 'Default YouTube upload preferences saved successfully.'
-      });
-      setTimeout(() => setFeedbackMessage(null), 3500);
+      toast.success('Default YouTube upload preferences saved successfully.');
     } catch (err) {
-      alert('Failed to save preferences: ' + err.message);
+      toast.error('Failed to save preferences: ' + err.message);
     } finally {
       setSavingPrefs(false);
     }
