@@ -1,0 +1,296 @@
+@import './variables.scss';
+
+.app-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--bg-primary);
+  transition: background-color 0.3s ease;
+  width: 100%;
+}
+
+.sidebar {
+  width: 260px;
+  min-width: 260px;
+  max-width: 260px;
+  flex-shrink: 0;
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+
+  .sidebar-header {
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid var(--border-color);
+
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: $radius-md;
+      background: $gradient-cyan-purple;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #000;
+      font-weight: 800;
+      font-size: 16px;
+      box-shadow: 0 4px 12px rgba(0, 229, 255, 0.3);
+    }
+
+    .brand-title {
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      background: $gradient-cyan-purple;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-sub {
+      font-size: 10px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+  }
+
+  .nav-menu {
+    flex: 1;
+    padding: 16px 12px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    .nav-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      font-weight: 700;
+      letter-spacing: 1px;
+      padding: 12px 12px 6px 12px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      border-radius: $radius-md;
+      color: var(--text-secondary);
+      font-size: 13px;
+      font-weight: 500;
+      transition: background-color 0.15s ease, color 0.15s ease;
+
+      &:hover {
+        background: rgba(150, 150, 150, 0.08);
+        color: var(--text-primary);
+      }
+
+      &.active {
+        background: rgba(0, 229, 255, 0.12);
+        color: #00e5ff;
+        border: 1px solid rgba(0, 229, 255, 0.3);
+        font-weight: 600;
+      }
+    }
+  }
+
+  .sidebar-footer {
+    padding: 16px;
+    border-top: 1px solid var(--border-color);
+    background: var(--sidebar-footer-bg);
+
+    .system-status {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+
+      .status-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 11px;
+        color: var(--text-muted);
+
+        .indicator {
+          display: inline-block;
+          width: 7px;
+          height: 7px;
+          border-radius: 50%;
+          margin-right: 6px;
+
+          &.active {
+            background: $accent-green;
+            box-shadow: 0 0 8px $accent-green;
+          }
+
+          &.idle {
+            background: $accent-amber;
+          }
+
+          &.off {
+            background: var(--text-muted);
+          }
+        }
+      }
+    }
+  }
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow-y: auto;
+  height: 100vh;
+}
+
+.top-header {
+  height: 64px;
+  background: var(--header-bg);
+  border-bottom: 1px solid var(--border-color);
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: 90;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+
+    .page-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .system-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: $radius-md;
+      font-size: 12px;
+      color: var(--text-secondary);
+      box-shadow: none;
+    }
+  }
+}
+
+.content-body {
+  padding: 24px;
+  flex: 1;
+}
+
+// Responsive layout rules & Mobile Drawer
+@media (max-width: 768px) {
+
+  .desktop-only,
+  .desktop-nav {
+    display: none !important;
+  }
+
+  .mobile-menu-btn,
+  .mobile-close-btn {
+    display: inline-flex !important;
+  }
+
+  .sidebar {
+    position: fixed !important;
+    left: -280px !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    height: 100vh !important;
+    transition: left 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25) !important;
+    z-index: 1000 !important;
+
+    &.open {
+      left: 0 !important;
+    }
+  }
+
+  .main-content {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .top-header {
+    padding: 0 14px !important;
+  }
+
+  .content-body {
+    padding: 16px !important;
+  }
+}
+
+// Modal Backdrop
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+
+  .modal-content {
+    background: var(--modal-bg);
+    border: 1px solid var(--border-color);
+    border-radius: $radius-xl;
+    max-width: 760px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: var(--card-shadow);
+    animation: modalPop 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+
+    .modal-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-body {
+      padding: 20px;
+    }
+  }
+}
+
+@keyframes modalPop {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}

@@ -1,0 +1,98 @@
+// ==============================================================================
+// TM Cliper Centralized Design System Tokens
+// ==============================================================================
+
+// Theme variables with Light Mode as Default (Solid Clean Surfaces - No Glassmorphism)
+:root, [data-theme="light"] {
+  --bg-primary: #f8fafc;
+  --bg-secondary: #ffffff;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f1f5f9;
+  --bg-input: #ffffff;
+  --border-color: #cbd5e1;
+  --border-dark: #94a3b8;
+  --border-focus: #94a3b8;
+  --border-glow: none;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --header-bg: #ffffff;
+  --sidebar-bg: #ffffff;
+  --sidebar-footer-bg: #f8fafc;
+  --pill-bg: #f1f5f9;
+  --nav-active-bg: #f1f5f9;
+  --nav-active-text: #0f172a;
+  --nav-active-border: #cbd5e1;
+  --modal-bg: #ffffff;
+
+  // Standardized Design System Radiuses
+  --radius-sm: 6px;   // Small elements, badges, tags
+  --radius-md: 8px;   // Inputs and buttons
+  --radius-lg: 10px;  // Cards and panels
+  --radius-xl: 12px;  // Large containers and modals
+}
+
+[data-theme="dark"] {
+  --bg-primary: #070b12;
+  --bg-secondary: #0d131f;
+  --bg-card: #111827;
+  --bg-card-hover: #1e293b;
+  --bg-input: #0b111e;
+  --border-color: #27354f;
+  --border-dark: #3b4d6d;
+  --border-focus: #4b6288;
+  --border-glow: none;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --header-bg: #0d131f;
+  --sidebar-bg: #0d131f;
+  --sidebar-footer-bg: #070b12;
+  --pill-bg: #131b2e;
+  --nav-active-bg: #1e293b;
+  --nav-active-text: #ffffff;
+  --nav-active-border: #3b4d6d;
+  --modal-bg: #111827;
+
+  // Standardized Design System Radiuses
+  --radius-sm: 6px;   // Small elements, badges, tags
+  --radius-md: 8px;   // Inputs and buttons
+  --radius-lg: 10px;  // Cards and panels
+  --radius-xl: 12px;  // Large containers and modals
+}
+
+// SCSS Variables mapping to CSS properties
+$bg-primary: var(--bg-primary);
+$bg-secondary: var(--bg-secondary);
+$bg-card: var(--bg-card);
+$bg-card-hover: var(--bg-card-hover);
+$bg-input: var(--bg-input);
+$border-color: var(--border-color);
+$border-focus: var(--border-focus);
+
+// Accent Colors
+$accent-cyan: #00e5ff;
+$accent-purple: #9d4edd;
+$accent-green: #00e676;
+$accent-red: #ff3366;
+$accent-amber: #ffaa00;
+
+// Gradients
+$gradient-cyan-purple: linear-gradient(135deg, #00e5ff 0%, #9d4edd 100%);
+$gradient-card: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0) 100%);
+
+// Text Colors
+$text-primary: var(--text-primary);
+$text-secondary: var(--text-secondary);
+$text-muted: var(--text-muted);
+
+// Standardized Design System Radiuses
+$radius-sm: 6px;   // Small elements, badges, tags
+$radius-md: 8px;   // Inputs and buttons
+$radius-lg: 10px;  // Cards and panels
+$radius-xl: 12px;  // Large containers and modals
+
+$font-sans: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+$font-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
