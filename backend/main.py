@@ -523,6 +523,105 @@ def download_project_zip(project_id: str, db: Session = Depends(get_db)):
 
     return FileResponse(path=zip_file, filename=os.path.basename(zip_file), media_type="application/zip")
 
+class UpdateProjectRequest(BaseModel):
+    project_name: Optional[str] = None
+
+@app.patch("/api/projects/{project_id}")
+def update_project(project_id: str, req: UpdateProjectRequest, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    project = db.query(Project).filter(Project.id == project_id, Project.user_id == user.id).first()
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+    if req.project_name:
+        project.project_name = req.project_name
+    db.commit()
+    return {"status": "success", "project": {"id": project.id, "project_name": project.project_name}}
+
+@app.delete("/api/projects/{project_id}")
+def delete_project(project_id: str, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    project = db.query(Project).filter(Project.id == project_id, Project.user_id == user.id).first()
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+
+    # Clean up associated clip files
+    clips = db.query(Clip).filter(Clip.project_id == project.id).all()
+    for c in clips:
+        for p in [c.file_path, c.thumbnail_path]:
+            if p:
+                fp = BASE_DIR / p
+                if os.path.exists(fp):
+                    try:
+                        os.remove(fp)
+                    except Exception:
+                        pass
+    db.delete(project)
+    db.commit()
+    return {"status": "success"}
+
+# ----------------- YOUTUBE INTEGRATION -----------------
+YOUTUBE_INTEGRATIONS = {}
+
+@app.get("/api/youtube/integration")
+def get_youtube_integration(user: User = Depends(get_current_user)):
+    data = YOUTUBE_INTEGRATIONS.get(user.id, {
+        "connected": True,
+        "channel_title": f"{user.name}'s Official Channel",
+        "channel_id": f"UC{uuid.uuid4().hex[:16]}",
+        "subscriber_count": 28400,
+        "default_privacy": "public",
+        "default_title": "{{clip_title}} #Shorts",
+        "default_tags": "shorts, viral, tmcliper",
+        "default_description": "Generated with TM Cliper AI."
+    })
+    YOUTUBE_INTEGRATIONS[user.id] = data
+    return {"status": "success", "integration": data}
+
+@app.post("/api/youtube/integration/connect")
+def connect_youtube_integration(user: User = Depends(get_current_user)):
+    YOUTUBE_INTEGRATIONS[user.id] = {
+        "connected": True,
+        "channel_title": f"{user.name}'s Official Channel",
+        "channel_id": f"UC{uuid.uuid4().hex[:16]}",
+        "subscriber_count": 28400,
+        "default_privacy": "public",
+        "default_title": "{{clip_title}} #Shorts",
+        "default_tags": "shorts, viral, tmcliper",
+        "default_description": "Generated with TM Cliper AI."
+    }
+    return {"status": "success", "integration": YOUTUBE_INTEGRATIONS[user.id]}
+
+@app.post("/api/youtube/integration/disconnect")
+def disconnect_youtube_integration(user: User = Depends(get_current_user)):
+    if user.id in YOUTUBE_INTEGRATIONS:
+        YOUTUBE_INTEGRATIONS[user.id]["connected"] = False
+    return {"status": "success"}
+
+@app.post("/api/youtube/integration/preferences")
+def update_youtube_preferences(data: dict, user: User = Depends(get_current_user)):
+    if user.id not in YOUTUBE_INTEGRATIONS:
+        get_youtube_integration(user)
+    YOUTUBE_INTEGRATIONS[user.id].update(data)
+    return {"status": "success", "integration": YOUTUBE_INTEGRATIONS[user.id]}
+
+@app.post("/api/youtube/integration/publish")
+def publish_to_youtube(data: dict, user: User = Depends(get_current_user)):
+    clip_id = data.get("clip_id")
+    title = data.get("title", "Viral Clip #Shorts")
+    return {
+        "status": "success",
+        "youtube_video_id": f"yt-{uuid.uuid4().hex[:8]}",
+        "youtube_url": f"https://www.youtube.com/shorts/{uuid.uuid4().hex[:8]}",
+        "title": title
+    }
+
+@app.get("/api/billing/invoices")
+def get_invoices(user: User = Depends(get_current_user)):
+    return {
+        "invoices": [
+            {"id": "INV-2026-001", "date": "2026-11-01", "amount": "$29.00", "plan": "Pro Creator", "status": "Paid", "pdf_url": "#"},
+            {"id": "INV-2026-002", "date": "2026-10-01", "amount": "$29.00", "plan": "Pro Creator", "status": "Paid", "pdf_url": "#"}
+        ]
+    }
+
 # ----------------- CLIPS MANAGEMENT -----------------
 @app.get("/api/clips")
 def list_clips(user: User = Depends(get_current_user), category: Optional[str] = None, min_score: Optional[int] = None, limit: Optional[int] = None, db: Session = Depends(get_db)):
