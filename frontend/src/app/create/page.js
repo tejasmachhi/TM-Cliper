@@ -482,7 +482,7 @@ export default function CreateClipsPage() {
                   onClick={() => setActivePreviewClip(clip)}
                 >
                   <img
-                    src={clip.thumbnail_url?.startsWith('http') ? clip.thumbnail_url : `http://127.0.0.1:8000${clip.thumbnail_url || `/api/clips/${clip.id}/thumbnail`}`}
+                    src={api.getMediaUrl(clip.thumbnail_url || `/api/clips/${clip.id}/thumbnail`)}
                     alt={clip.title}
                     style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }}
                     onError={(e) => { e.currentTarget.style.display = 'none'; }}

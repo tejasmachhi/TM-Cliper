@@ -79,8 +79,7 @@ export default function UploadToYouTubeModal({ clip, onClose, onSuccess }) {
     }
   };
 
-  const rawThumb = clip.thumbnail_url || `/api/clips/${clip.id}/thumbnail`;
-  const thumbUrl = rawThumb.startsWith('http') ? rawThumb : `http://127.0.0.1:8000${rawThumb}`;
+  const thumbUrl = api.getMediaUrl(clip.thumbnail_url || `/api/clips/${clip.id}/thumbnail`);
 
   return (
     <div className="modal-backdrop" onClick={onClose} style={{ zIndex: 1000 }}>

@@ -4,13 +4,13 @@ import { useState } from 'react';
 import { X, Play, Download, Trash2, Film, Sparkles, Upload } from 'lucide-react';
 import YouTubeLogo from '@/components/YouTubeLogo';
 import UploadToYouTubeModal from '@/components/UploadToYouTubeModal';
+import { api } from '@/utils/api';
 
 export default function VideoPlayerModal({ clip, onClose, onDelete }) {
   const [showUploadModal, setShowUploadModal] = useState(false);
   if (!clip) return null;
 
-  const rawUrl = clip.video_url || `/api/clips/${clip.id}/stream`;
-  const streamUrl = rawUrl.startsWith('http') ? rawUrl : `http://127.0.0.1:8000${rawUrl}`;
+  const streamUrl = api.getMediaUrl(clip.video_url || `/api/clips/${clip.id}/stream`);
 
   return (
     <>

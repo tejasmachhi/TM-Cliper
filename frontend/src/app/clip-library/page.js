@@ -193,11 +193,8 @@ export default function ClipLibraryPage() {
       ) : (
         <div className="clips-grid">
           {filteredClips.map(clip => {
-            const rawUrl = clip.video_url || `/api/clips/${clip.id}/stream`;
-            const streamUrl = rawUrl.startsWith('http') ? rawUrl : `http://127.0.0.1:8000${rawUrl}`;
-            
-            const rawThumb = clip.thumbnail_url || `/api/clips/${clip.id}/thumbnail`;
-            const thumbUrl = rawThumb.startsWith('http') ? rawThumb : `http://127.0.0.1:8000${rawThumb}`;
+            const streamUrl = api.getMediaUrl(clip.video_url || `/api/clips/${clip.id}/stream`);
+            const thumbUrl = api.getMediaUrl(clip.thumbnail_url || `/api/clips/${clip.id}/thumbnail`);
 
             const isSelected = selectedIds.includes(clip.id);
 

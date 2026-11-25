@@ -301,9 +301,7 @@ export default function DashboardPage() {
           <div className="card-body" style={{ padding: '16px' }}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '14px' }}>
               {recentClips.map(clip => {
-                const thumbUrl = clip.thumbnail_url?.startsWith('http')
-                  ? clip.thumbnail_url
-                  : `http://127.0.0.1:8000${clip.thumbnail_url || `/api/clips/${clip.id}/thumbnail`}`;
+                const thumbUrl = api.getMediaUrl(clip.thumbnail_url || `/api/clips/${clip.id}/thumbnail`);
 
                 return (
                   <div

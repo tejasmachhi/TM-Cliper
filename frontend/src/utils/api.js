@@ -1,5 +1,18 @@
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api';
 
+export function getMediaUrl(path) {
+  if (!path) return '';
+  if (path.startsWith('http://') || path.startsWith('https://')) {
+    if (typeof window !== 'undefined' && window.location.protocol === 'https:' && path.includes('trycloudflare.com')) {
+      return path.replace('http://', 'https://');
+    }
+    return path;
+  }
+  const rootUrl = BASE_URL.replace(/\/api\/?$/, '');
+  const cleanPath = path.startsWith('/') ? path : `/${path}`;
+  return `${rootUrl}${cleanPath}`;
+}
+
 export async function fetchApi(endpoint, options = {}) {
   const url = `${BASE_URL}${endpoint}`;
   let token = null;
@@ -28,6 +41,7 @@ export async function fetchApi(endpoint, options = {}) {
 }
 
 export const api = {
+  getMediaUrl,
   // System & Health
   getSystemStatus: () => fetchApi('/system/status'),
   getSettings: () => fetchApi('/settings'),
