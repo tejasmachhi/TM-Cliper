@@ -7,7 +7,10 @@ import datetime
 from pathlib import Path
 import imageio_ffmpeg
 import yt_dlp
-from backend.database.session import BASE_DIR, STORAGE_DIR
+try:
+    from backend.database.session import BASE_DIR, STORAGE_DIR
+except ImportError:
+    from database.session import BASE_DIR, STORAGE_DIR
 
 RECORDINGS_DIR = STORAGE_DIR / "recordings"
 CLIPS_DIR = STORAGE_DIR / "clips"

@@ -6,8 +6,12 @@ import subprocess
 from pathlib import Path
 from typing import List, Dict, Any
 
-from backend.database.session import BASE_DIR, STORAGE_DIR, PROJECTS_DIR
-from backend.engine.video_engine import get_ffmpeg_path
+try:
+    from backend.database.session import BASE_DIR, STORAGE_DIR, PROJECTS_DIR
+    from backend.engine.video_engine import get_ffmpeg_path
+except ImportError:
+    from database.session import BASE_DIR, STORAGE_DIR, PROJECTS_DIR
+    from engine.video_engine import get_ffmpeg_path
 
 def get_project_dirs(project_id: str) -> Dict[str, Path]:
     proj_root = PROJECTS_DIR / project_id

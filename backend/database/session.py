@@ -10,7 +10,7 @@ PROJECTS_DIR = STORAGE_DIR / "projects"
 os.makedirs(STORAGE_DIR, exist_ok=True)
 os.makedirs(PROJECTS_DIR, exist_ok=True)
 
-DATABASE_URL = os.getenv("DATABASE_URL", f"sqlite:///{STORAGE_DIR}/clipgenius.db")
+DATABASE_URL = os.getenv("DATABASE_URL", f"sqlite:///{STORAGE_DIR}/tmcliper.db")
 
 engine = create_engine(
     DATABASE_URL,

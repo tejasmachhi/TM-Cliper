@@ -13,24 +13,46 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
-from backend.database.session import engine, Base, get_db, BASE_DIR, STORAGE_DIR, PROJECTS_DIR
-from backend.database.models import (
-    User, Project, VideoMetadata, AnalysisJob, Transcript, DetectionEvent, Clip, Comment, Subscription, UsageRecord
-)
-from backend.core.auth import (
-    hash_password, verify_password, create_session_token, get_user_from_token, get_or_create_default_user
-)
-from backend.services.youtube_service import get_youtube_metadata, is_valid_youtube_url
-from backend.services.ai_analyzer import generate_clip_candidates, classify_video_genre
-from backend.services.video_service import (
-    get_project_dirs, cut_clip, generate_thumbnail, create_synthetic_demo_clip, generate_project_zip
-)
-from backend.engine.video_engine import download_youtube_video, get_file_duration
+import sys
+CURRENT_DIR = Path(__file__).resolve().parent
+if str(CURRENT_DIR) not in sys.path:
+    sys.path.insert(0, str(CURRENT_DIR))
+if str(CURRENT_DIR.parent) not in sys.path:
+    sys.path.insert(0, str(CURRENT_DIR.parent))
+
+try:
+    from backend.database.session import engine, Base, get_db, BASE_DIR, STORAGE_DIR, PROJECTS_DIR
+    from backend.database.models import (
+        User, Project, VideoMetadata, AnalysisJob, Transcript, DetectionEvent, Clip, Comment, Subscription, UsageRecord
+    )
+    from backend.core.auth import (
+        hash_password, verify_password, create_session_token, get_user_from_token, get_or_create_default_user
+    )
+    from backend.services.youtube_service import get_youtube_metadata, is_valid_youtube_url
+    from backend.services.ai_analyzer import generate_clip_candidates, classify_video_genre
+    from backend.services.video_service import (
+        get_project_dirs, cut_clip, generate_thumbnail, create_synthetic_demo_clip, generate_project_zip
+    )
+    from backend.engine.video_engine import download_youtube_video, get_file_duration
+except ImportError:
+    from database.session import engine, Base, get_db, BASE_DIR, STORAGE_DIR, PROJECTS_DIR
+    from database.models import (
+        User, Project, VideoMetadata, AnalysisJob, Transcript, DetectionEvent, Clip, Comment, Subscription, UsageRecord
+    )
+    from core.auth import (
+        hash_password, verify_password, create_session_token, get_user_from_token, get_or_create_default_user
+    )
+    from services.youtube_service import get_youtube_metadata, is_valid_youtube_url
+    from services.ai_analyzer import generate_clip_candidates, classify_video_genre
+    from services.video_service import (
+        get_project_dirs, cut_clip, generate_thumbnail, create_synthetic_demo_clip, generate_project_zip
+    )
+    from engine.video_engine import download_youtube_video, get_file_duration
 
 # Create all database tables
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="ClipGenius AI SaaS API", version="2.0.0")
+app = FastAPI(title="TM Cliper AI Studio API", version="2.0.0")
 
 app.add_middleware(
     CORSMiddleware,

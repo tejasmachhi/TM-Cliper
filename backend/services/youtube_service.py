@@ -2,7 +2,10 @@ import re
 import json
 from typing import Dict, Any, List
 import yt_dlp
-from backend.engine.video_engine import get_ffmpeg_path
+try:
+    from backend.engine.video_engine import get_ffmpeg_path
+except ImportError:
+    from engine.video_engine import get_ffmpeg_path
 
 YOUTUBE_REGEX = r'(?:https?:\/\/)?(?:[a-zA-Z0-9_-]+\.)?(?:youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/|live\/|embed\/|v\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})'
 
