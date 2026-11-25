@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { Film, Play, Download, Trash2, Filter, Sparkles, CheckSquare, Square, Clock } from 'lucide-react';
 import VideoPlayerModal from '@/components/VideoPlayerModal';
+import UploadToYouTubeModal from '@/components/UploadToYouTubeModal';
+import YouTubeLogo from '@/components/YouTubeLogo';
 import Link from 'next/link';
 import { api } from '@/utils/api';
 import '@/styles/clips.scss';
@@ -14,6 +16,7 @@ export default function ClipLibraryPage() {
   const [filterMinScore, setFilterMinScore] = useState(0);
   const [selectedIds, setSelectedIds] = useState([]);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [uploadingClip, setUploadingClip] = useState(null);
 
   const fetchClips = () => {
     api.getClips().then(res => {
@@ -262,6 +265,14 @@ export default function ClipLibraryPage() {
                     >
                       <Play size={13} /> Preview
                     </button>
+                    <button
+                      className="btn btn-secondary btn-sm"
+                      onClick={() => setUploadingClip(clip)}
+                      title="Upload directly to YouTube Shorts"
+                      style={{ padding: '6px 10px', background: 'rgba(255,0,0,0.08)', color: '#FF0000', borderColor: 'rgba(255,0,0,0.2)' }}
+                    >
+                      <YouTubeLogo size={14} />
+                    </button>
                     <a 
                       href={streamUrl}
                       download={`${clip.title}.mp4`}
@@ -291,6 +302,13 @@ export default function ClipLibraryPage() {
               alert('Failed to delete clip: ' + err.message);
             }
           }}
+        />
+      )}
+
+      {uploadingClip && (
+        <UploadToYouTubeModal
+          clip={uploadingClip}
+          onClose={() => setUploadingClip(null)}
         />
       )}
     </div>

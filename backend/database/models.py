@@ -19,6 +19,7 @@ class User(Base):
     clips = relationship("Clip", back_populates="user", cascade="all, delete-orphan")
     subscriptions = relationship("Subscription", back_populates="user", cascade="all, delete-orphan")
     usage_records = relationship("UsageRecord", back_populates="user", cascade="all, delete-orphan")
+    connected_accounts = relationship("ConnectedAccount", back_populates="user", cascade="all, delete-orphan")
 
 class Project(Base):
     __tablename__ = "projects"
@@ -156,3 +157,27 @@ class UsageRecord(Base):
 
     user = relationship("User", back_populates="usage_records")
     project = relationship("Project", back_populates="usage_records")
+
+class ConnectedAccount(Base):
+    __tablename__ = "connected_accounts"
+
+    id = Column(String(50), primary_key=True, index=True)
+    user_id = Column(String(50), ForeignKey("users.id"), nullable=False, index=True)
+    provider = Column(String(50), default="youtube", nullable=False)
+    channel_id = Column(String(100), nullable=True)
+    channel_title = Column(String(255), nullable=True)
+    channel_handle = Column(String(100), nullable=True)
+    channel_thumbnail = Column(String(500), nullable=True)
+    subscriber_count = Column(Integer, default=0)
+    encrypted_refresh_token = Column(Text, nullable=True)
+    access_token = Column(Text, nullable=True)
+    token_expiry = Column(DateTime, nullable=True)
+    granted_scopes = Column(Text, nullable=True)
+    default_privacy = Column(String(20), default="public")
+    default_title = Column(String(200), default="{{clip_title}} #Shorts")
+    default_description = Column(Text, default="Auto-generated with TM Cliper AI.")
+    default_tags = Column(String(300), default="shorts, viral, tmcliper")
+    connected_at = Column(DateTime, default=datetime.datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+
+    user = relationship("User", back_populates="connected_accounts")

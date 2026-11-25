@@ -41,11 +41,18 @@ export const api = {
 
   // YouTube Preview & Integration
   previewYoutube: (url) => fetchApi('/youtube/preview', { method: 'POST', body: JSON.stringify({ url }) }),
-  getYouTubeIntegration: () => fetchApi('/youtube/integration'),
-  connectYouTube: () => fetchApi('/youtube/integration/connect', { method: 'POST' }),
-  disconnectYouTube: () => fetchApi('/youtube/integration/disconnect', { method: 'POST' }),
-  updateYouTubePreferences: (data) => fetchApi('/youtube/integration/preferences', { method: 'POST', body: JSON.stringify(data) }),
-  publishToYouTube: (data) => fetchApi('/youtube/integration/publish', { method: 'POST', body: JSON.stringify(data) }),
+  getYouTubeStatus: () => fetchApi('/youtube/status'),
+  getYouTubeConnect: () => fetchApi('/youtube/connect'),
+  getYouTubeChannel: () => fetchApi('/youtube/channel'),
+  disconnectYouTubeAccount: () => fetchApi('/youtube/disconnect', { method: 'DELETE' }),
+  updateYouTubePreferences: (data) => fetchApi('/youtube/preferences', { method: 'POST', body: JSON.stringify(data) }),
+  uploadClipToYouTube: (data) => fetchApi('/youtube/upload', { method: 'POST', body: JSON.stringify(data) }),
+
+  // Legacy aliases
+  getYouTubeIntegration: () => fetchApi('/youtube/status'),
+  connectYouTube: () => fetchApi('/youtube/connect'),
+  disconnectYouTube: () => fetchApi('/youtube/disconnect', { method: 'DELETE' }),
+  publishToYouTube: (data) => fetchApi('/youtube/upload', { method: 'POST', body: JSON.stringify(data) }),
 
   // Projects
   getProjects: () => fetchApi('/projects'),

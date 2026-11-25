@@ -41,6 +41,9 @@ storage/processing/*
 .env.local
 .env.development.local
 .env.production.local
+*.key
+storage/credentials/*
+!storage/credentials/.gitkeep
 
 # OS
 .DS_Store

@@ -34,6 +34,7 @@ try:
         get_project_dirs, cut_clip, generate_thumbnail, create_synthetic_demo_clip, generate_project_zip
     )
     from backend.engine.video_engine import download_youtube_video, get_file_duration
+    from backend.routes.youtube import router as youtube_router
 except ImportError:
     from database.session import engine, Base, get_db, BASE_DIR, STORAGE_DIR, PROJECTS_DIR
     from database.models import (
@@ -48,6 +49,7 @@ except ImportError:
         get_project_dirs, cut_clip, generate_thumbnail, create_synthetic_demo_clip, generate_project_zip
     )
     from engine.video_engine import download_youtube_video, get_file_duration
+    from routes.youtube import router as youtube_router
 
 # Create all database tables
 Base.metadata.create_all(bind=engine)
@@ -557,61 +559,8 @@ def delete_project(project_id: str, user: User = Depends(get_current_user), db: 
     db.commit()
     return {"status": "success"}
 
-# ----------------- YOUTUBE INTEGRATION -----------------
-YOUTUBE_INTEGRATIONS = {}
-
-@app.get("/api/youtube/integration")
-def get_youtube_integration(user: User = Depends(get_current_user)):
-    data = YOUTUBE_INTEGRATIONS.get(user.id, {
-        "connected": True,
-        "channel_title": f"{user.name}'s Official Channel",
-        "channel_id": f"UC{uuid.uuid4().hex[:16]}",
-        "subscriber_count": 28400,
-        "default_privacy": "public",
-        "default_title": "{{clip_title}} #Shorts",
-        "default_tags": "shorts, viral, tmcliper",
-        "default_description": "Generated with TM Cliper AI."
-    })
-    YOUTUBE_INTEGRATIONS[user.id] = data
-    return {"status": "success", "integration": data}
-
-@app.post("/api/youtube/integration/connect")
-def connect_youtube_integration(user: User = Depends(get_current_user)):
-    YOUTUBE_INTEGRATIONS[user.id] = {
-        "connected": True,
-        "channel_title": f"{user.name}'s Official Channel",
-        "channel_id": f"UC{uuid.uuid4().hex[:16]}",
-        "subscriber_count": 28400,
-        "default_privacy": "public",
-        "default_title": "{{clip_title}} #Shorts",
-        "default_tags": "shorts, viral, tmcliper",
-        "default_description": "Generated with TM Cliper AI."
-    }
-    return {"status": "success", "integration": YOUTUBE_INTEGRATIONS[user.id]}
-
-@app.post("/api/youtube/integration/disconnect")
-def disconnect_youtube_integration(user: User = Depends(get_current_user)):
-    if user.id in YOUTUBE_INTEGRATIONS:
-        YOUTUBE_INTEGRATIONS[user.id]["connected"] = False
-    return {"status": "success"}
-
-@app.post("/api/youtube/integration/preferences")
-def update_youtube_preferences(data: dict, user: User = Depends(get_current_user)):
-    if user.id not in YOUTUBE_INTEGRATIONS:
-        get_youtube_integration(user)
-    YOUTUBE_INTEGRATIONS[user.id].update(data)
-    return {"status": "success", "integration": YOUTUBE_INTEGRATIONS[user.id]}
-
-@app.post("/api/youtube/integration/publish")
-def publish_to_youtube(data: dict, user: User = Depends(get_current_user)):
-    clip_id = data.get("clip_id")
-    title = data.get("title", "Viral Clip #Shorts")
-    return {
-        "status": "success",
-        "youtube_video_id": f"yt-{uuid.uuid4().hex[:8]}",
-        "youtube_url": f"https://www.youtube.com/shorts/{uuid.uuid4().hex[:8]}",
-        "title": title
-    }
+# ----------------- YOUTUBE INTEGRATION (MODULAR ROUTER) -----------------
+app.include_router(youtube_router, prefix="/api/youtube", tags=["YouTube Integration"])
 
 @app.get("/api/billing/invoices")
 def get_invoices(user: User = Depends(get_current_user)):
